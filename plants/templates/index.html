@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row pl-3 pt-3">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">
+        Simon's Garden Monitor
+      </div>
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <th>Plant</th>
+            <th>Soil Moisture Level</th>
+            <th>Water</th>
+          </thead>
+          <tbody>
+            {% for plant in plants %}
+            <tr>
+              <td>{{ plant.name }}</td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
