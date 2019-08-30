@@ -4,6 +4,8 @@
 {% block content %}
 <div class="row pl-3 pt-3">
   <div class="col-6">
+
+    <!-- Plant list card -->
     <div class="card">
       <div class="card-header">
         Simon's Garden Monitor
@@ -13,6 +15,7 @@
           <thead>
             <th>Plant</th>
             <th>Soil Moisture Level</th>
+            <th>Last watered</th>
             <th>Water</th>
           </thead>
           <tbody>
@@ -21,13 +24,14 @@
               <td>{{ plant.name }}</td>
               <td></td>
               <td></td>
+              <td><button class="btn-pill btn-primary"><i class="fa fa-shower"></i></button></td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-
     </div>
+    <!-- Plant list card -->
 
   </div>
 </div>
