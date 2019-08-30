@@ -1,1 +1,1 @@
-web: gunicorn gardenmonitor.wsgi
+web: gunicorn gardenmonitor.wsgi:application
