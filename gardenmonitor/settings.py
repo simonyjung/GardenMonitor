@@ -37,7 +37,7 @@ if os.environ.get('DEBUG') == 'False':
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['simon-garden.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'simon-garden.herokuapp.com']
 
 
 # Application definition
