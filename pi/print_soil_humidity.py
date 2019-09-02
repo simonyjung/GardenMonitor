@@ -6,7 +6,7 @@ Reads value of analog soil moisture sensor and continuously outputs reading
 """
 
 PCF8591_ADDRESS = 0x48
-cmd = 0x40
+CONTROL_BYTE = 0x40
 MIN_HUMIDITY_VALUE = 220  # Value of probe when exposed to air
 MAX_HUMIDITY_VALUE = 128  # Value of probe when exposed to water
 CHANNELS = [0, 1]  # up to four inputs for PCF8591 Analog to Digital Converter
@@ -60,14 +60,14 @@ def main():
     while True:
         soil_readings = []
         for channel in CHANNELS:
-            value = read_analog(PCF8591_ADDRESS, channel, cmd)
+            value = read_analog(PCF8591_ADDRESS, channel, CONTROL_BYTE)
             soil_moisture = get_humidity_percentage(value)
             soil_readings.append({'soil_moisture': soil_moisture,
                                   'channel': channel})
 
         # write the DAC value
         write_analog(PCF8591_ADDRESS,
-                     cmd,
+                     CONTROL_BYTE,
                      int(soil_readings[0]['soil_moisture'] * 2.55))
 
         output_message = "Soil Moisture levels: "
