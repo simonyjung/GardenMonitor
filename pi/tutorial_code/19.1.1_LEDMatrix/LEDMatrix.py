@@ -35,12 +35,14 @@ data = [#data of "0-F"
     0x00, 0x00, 0x7F, 0x48, 0x48, 0x40, 0x00, 0x00, # "F"
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, # " "
 ]
+
 def setup():
     GPIO.setmode(GPIO.BOARD)    # Number GPIOs by its physical location
     GPIO.setup(dataPin, GPIO.OUT)
     GPIO.setup(latchPin, GPIO.OUT)
     GPIO.setup(clockPin, GPIO.OUT)
-    
+
+
 def shiftOut(dPin,cPin,order,val):
     for i in range(0,8):
         GPIO.output(cPin,GPIO.LOW);
@@ -49,6 +51,7 @@ def shiftOut(dPin,cPin,order,val):
         elif(order == MSBFIRST):
             GPIO.output(dPin,(0x80&(val<<i)==0x80) and GPIO.HIGH or GPIO.LOW)
         GPIO.output(cPin,GPIO.HIGH);
+
 
 def loop():
     while True:

@@ -6,7 +6,6 @@ Reads value of analog soil moisture sensor and continuously outputs reading
 """
 
 PCF8591_ADDRESS = 0x48
-bus = smbus.SMBus(1)
 cmd = 0x40
 MIN_HUMIDITY_VALUE = 220  # Value of probe when exposed to air
 MAX_HUMIDITY_VALUE = 128  # Value of probe when exposed to water
@@ -15,11 +14,11 @@ CHANNELS = [0, 1]  # up to four inputs for PCF8591 Analog to Digital Converter
 
 def read_analog(address, channel, command):
     """
-    Read ADC value
+    Read analog signal as 8 bit integer
     :param address:
     :param channel: Int
     :param command:
-    :return:
+    :return: 8 bit value of analog signal
     """
     value = bus.read_byte_data(address, command + channel)
     return value
@@ -28,15 +27,23 @@ def read_analog(address, channel, command):
 def write_analog(address, command, value):
     """
     Write DAC value
-    :param value:
+    :param address:
+    :param value: 8 bit integer
+    :param command:
     :return:
     """
     bus.write_byte_data(address, command, value)
 
 
-def get_humidity(value):
-    value_range = MIN_HUMIDITY_VALUE - MAX_HUMIDITY_VALUE
-    humidity_percentage = ((MIN_HUMIDITY_VALUE - value) / value_range) * 100
+def get_humidity_percentage(value, min_value=MIN_HUMIDITY_VALUE, max_value=MAX_HUMIDITY_VALUE):
+    """
+    :param value: measured 8 bit value of analog signal
+    :param min_value: calibrated value of probe when exposed to air
+    :param max_value: calibrated value of probe when exposed to water
+    :return: Percent humidity 0%-100%
+    """
+    value_range = min_value - max_value
+    humidity_percentage = ((min_value - value) / value_range) * 100
     if humidity_percentage < 0:
         return 0
     elif humidity_percentage > 100:
@@ -45,16 +52,16 @@ def get_humidity(value):
         return round(humidity_percentage, 1)
 
 
-def clean_up():
-    bus.close()
-
-
 def main():
+    """
+    Continuously print sensor readings
+    :return:
+    """
     while True:
         soil_readings = []
         for channel in CHANNELS:
             value = read_analog(PCF8591_ADDRESS, channel, cmd)
-            soil_moisture = get_humidity(value)
+            soil_moisture = get_humidity_percentage(value)
             soil_readings.append({'soil_moisture': soil_moisture,
                                   'channel': channel})
 
@@ -72,7 +79,8 @@ def main():
 
 if __name__ == '__main__':
     print("Program is starting...")
+    bus = smbus.SMBus(1)
     try:
         main()
     except KeyboardInterrupt:
-        clean_up()
+        bus.close()
