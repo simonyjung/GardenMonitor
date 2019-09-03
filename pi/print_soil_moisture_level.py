@@ -2,7 +2,10 @@ import smbus
 import time
 
 """
-Reads value of analog soil moisture sensor and continuously outputs reading
+Read value of analog soil moisture sensor (up to 4) and continuously output reading.
+
+Sensor: Capacitive soil moisture sensor v1.2
+ADC: PCF8591 4 Channel 8 bit Analog to Digital Converter
 """
 
 PCF8591_ADDRESS = 0x48
