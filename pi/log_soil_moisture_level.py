@@ -22,6 +22,7 @@ CHANNELS = [0, 1]  # up to four inputs for PCF8591 Analog to Digital Converter
 MIN_HUMIDITY_VALUE = 220  # Value of probe when exposed to air
 MAX_HUMIDITY_VALUE = 128  # Value of probe when exposed to water
 
+# Map ADC channel to primary key
 PLANT_CHANNEL_TO_PK_DICT = {
     0: 1,
     1: 2

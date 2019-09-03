@@ -70,7 +70,7 @@ def main():
             soil_readings.append({'soil_moisture': soil_moisture,
                                   'channel': channel})
 
-        # write the DAC value
+        # write the DAC value to light led
         write_analog(PCF8591_ADDRESS,
                      CONTROL_BYTE,
                      int(soil_readings[0]['soil_moisture'] * 2.55))
