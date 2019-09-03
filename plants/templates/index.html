@@ -21,7 +21,7 @@
             {% for plant in plants %}
             <tr>
               <td>{{ plant.name }}</td>
-              <td></td>
+              <td>{{ plant.latest_soil_moisture_measurement.measurement }}%</td>
               <td><button class="btn-pill btn-primary"><i class="fa fa-shower"></i></button></td>
             </tr>
             {% endfor %}
