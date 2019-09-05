@@ -105,7 +105,7 @@ def main(lcd_display=None):
                 lcd_message += '\n'
             lcd_display.clear()
             lcd_display.message(lcd_message)
-        time.sleep(0.2)
+        time.sleep(0.5)
 
 
 if __name__ == '__main__':
