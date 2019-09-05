@@ -103,6 +103,7 @@ def main(lcd_display=None):
             lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
             if len(lcd_message) < 16:
                 lcd_message += '\n'
+            lcd_display.clear()
             lcd_display.message(lcd_message)
         time.sleep(0.2)
 
@@ -114,6 +115,7 @@ if __name__ == '__main__':
     pcf8574 = initialize_pcf8574()
     pcf8574.output(3, 1)  # turn on LCD back light
     lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4, 5, 6, 7], GPIO=pcf8574)
+    lcd.clear()
     try:
         main(lcd_display=lcd)
     except KeyboardInterrupt:
