@@ -26,8 +26,8 @@ def loop():
     while(True):         
         #lcd.clear()
         lcd.setCursor(0,0)  # set cursor position
-        lcd.message('0 31.1%  1 42.4%')
-        lcd.message( '2 61.1%  3 22.4%' )   # display the time
+        lcd.message('0 31.1%  1 42.4%\n')
+        lcd.message('2 61.1%  3 22.4%')   # display the time
         sleep(1)
         
 def destroy():
