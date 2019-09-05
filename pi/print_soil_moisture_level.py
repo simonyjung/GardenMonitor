@@ -106,9 +106,9 @@ def main(lcd_display=None):
             temp = 'How wet is she?\n'
             temp2 = '     {}%  '.format(soil_readings[0]['soil_moisture'])
 
-            if x[0]['soil_moisture'] > 50:
+            if soil_readings[0]['soil_moisture'] > 50:
                 temp3 = 'So Wet!'
-            elif x[0]['soil_moisture'] > 30:
+            elif soil_readings[0]['soil_moisture'] > 30:
                 temp3 = 'Close..'
             else:
                 temp3 = '       '
