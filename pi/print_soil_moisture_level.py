@@ -101,9 +101,7 @@ def main(lcd_display=None):
         # construct lcd message
         if lcd_display:
             lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
-            if len(lcd_message) < 16:
-                lcd_message += '\n'
-            lcd_display.clear()
+            lcd_display.setCursor(0, 0)
             lcd_display.message(lcd_message)
         time.sleep(1)
 
