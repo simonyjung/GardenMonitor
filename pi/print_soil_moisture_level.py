@@ -103,7 +103,7 @@ def main(lcd_display=None):
             lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
             lcd_display.setCursor(0, 0)
             lcd_display.message(lcd_message)
-        time.sleep(1)
+        time.sleep(.2)
 
 
 if __name__ == '__main__':
