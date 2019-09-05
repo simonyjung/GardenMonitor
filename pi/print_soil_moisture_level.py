@@ -101,18 +101,9 @@ def main(lcd_display=None):
         # construct lcd message
         if lcd_display:
             lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
-            lcd_message += '        '
+            lcd_message += '        \nDendi Inc.'
             lcd_display.setCursor(0, 0)
-            temp = 'How wet is she?\n'
-            temp2 = ' {}%  '.format(soil_readings[0]['soil_moisture'])
-
-            if soil_readings[0]['soil_moisture'] > 50:
-                temp3 = 'So Wet!  '
-            elif soil_readings[0]['soil_moisture'] > 30:
-                temp3 = 'Close..  '
-            else:
-                temp3 = '         '
-            lcd_display.message(temp + temp2 + temp3)
+            lcd_display.message(lcd_message)
         time.sleep(.2)
 
 
