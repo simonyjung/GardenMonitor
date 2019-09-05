@@ -104,7 +104,8 @@ def main(lcd_display=None):
             lcd_message += '        '
             lcd_display.setCursor(0, 0)
             temp = 'How wet is she?\n'
-            lcd_display.message(temp + lcd_message)
+            temp2 = '     {}%         '.format(x['soil_moisture'])
+            lcd_display.message(temp + temp2)
         time.sleep(.2)
 
 
