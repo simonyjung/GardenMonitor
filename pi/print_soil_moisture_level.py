@@ -99,8 +99,9 @@ def main(lcd_display=None):
                                      for x in soil_readings])
         print(output_message)
         # construct lcd message
-        lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
-        lcd_display.message(lcd_message)
+        if lcd_display:
+            lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
+            lcd_display.message(lcd_message)
         time.sleep(0.2)
 
 
@@ -108,9 +109,9 @@ if __name__ == '__main__':
     print("Program is starting...")
     bus = smbus.SMBus(1)
 
-    pcf8574 = initialize_pcf8574()
-    lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4, 5, 6, 7], GPIO=pcf8574)
+    #pcf8574 = initialize_pcf8574()
+    #lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4, 5, 6, 7], GPIO=pcf8574)
     try:
-        main(lcd_display=lcd)
+        main(lcd_display=NONE)
     except KeyboardInterrupt:
         bus.close()
