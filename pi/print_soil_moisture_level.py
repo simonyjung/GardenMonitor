@@ -113,7 +113,7 @@ if __name__ == '__main__':
     pcf8574 = initialize_pcf8574()
     pcf8574.output(3, 1)  # turn on LCD back light
     lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4, 5, 6, 7], GPIO=pcf8574)
-    lcd.clear()
+    lcd.begin(16, 2)  # Set lcd column, rows
     try:
         main(lcd_display=lcd)
     except KeyboardInterrupt:
