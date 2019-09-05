@@ -12,7 +12,7 @@ ADC: PCF8591 4 Channel 8 bit Analog to Digital Converter
 # ADC
 PCF8591_ADDRESS = 0x48
 CONTROL_BYTE = 0x40
-CHANNELS = [0, 1]  # up to four inputs for PCF8591 Analog to Digital Converter
+CHANNELS = [0]  # up to four inputs for PCF8591 Analog to Digital Converter
 # Calibrated sensor values
 MIN_HUMIDITY_VALUE = 220  # Value of probe when exposed to air
 MAX_HUMIDITY_VALUE = 128  # Value of probe when exposed to water
