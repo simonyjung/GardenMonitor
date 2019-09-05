@@ -80,7 +80,6 @@ def main(lcd_display=None):
     :return:
     """
     while True:
-        lcd_display.clear()
         soil_readings = []
         soil_readings_dict = {}
         for channel in CHANNELS:
