@@ -103,7 +103,7 @@ def main(lcd_display=None):
             lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
             if len(lcd_message) < 16:
                 lcd_message = lcd_message.ljust(16 - len(lcd_message))
-            #lcd_display.message(lcd_message + )
+            lcd_display.message(lcd_message + '\n                ')
         time.sleep(0.2)
 
 
