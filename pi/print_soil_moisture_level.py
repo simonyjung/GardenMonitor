@@ -104,14 +104,14 @@ def main(lcd_display=None):
             lcd_message += '        '
             lcd_display.setCursor(0, 0)
             temp = 'How wet is she?\n'
-            temp2 = '     {}%  '.format(soil_readings[0]['soil_moisture'])
+            temp2 = ' {}%  '.format(soil_readings[0]['soil_moisture'])
 
             if soil_readings[0]['soil_moisture'] > 50:
-                temp3 = 'So Wet!'
+                temp3 = 'So Wet!  '
             elif soil_readings[0]['soil_moisture'] > 30:
-                temp3 = 'Close..'
+                temp3 = 'Close..  '
             else:
-                temp3 = '       '
+                temp3 = '         '
             lcd_display.message(temp + temp2 + temp3)
         time.sleep(.2)
 
