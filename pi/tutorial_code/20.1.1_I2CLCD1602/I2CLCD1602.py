@@ -5,8 +5,8 @@
 # Author      : freenove
 # modification: 2018/08/03
 ########################################################################
-from PCF8574 import PCF8574_GPIO
-from Adafruit_LCD1602 import Adafruit_CharLCD
+from .PCF8574 import PCF8574_GPIO
+from .Adafruit_LCD1602 import Adafruit_CharLCD
 
 from time import sleep, strftime
 from datetime import datetime
@@ -26,8 +26,8 @@ def loop():
     while(True):         
         #lcd.clear()
         lcd.setCursor(0,0)  # set cursor position
-        lcd.message( 'CPU: ' + get_cpu_temp()+'\n' )# display CPU temperature
-        lcd.message( get_time_now() )   # display the time
+        lcd.message('0 31.1%  1 42.4%')
+        lcd.message( '2 61.1%  3 22.4%' )   # display the time
         sleep(1)
         
 def destroy():
