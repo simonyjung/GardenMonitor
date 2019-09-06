@@ -1,47 +1,22 @@
-import smbus
 import time
-from .components.PCF8574 import PCF8574_GPIO
-from .components.Adafruit_LCD1602 import Adafruit_CharLCD
+
+from gpiozero import MCP3008
+
+# Base Calibration
+MIN_HUMIDITY_VALUE = .860
+MAX_HUMIDITY_VALUE = .483
+MOISTURE_SENSOR_CHANNELS = [0]  # 0, 1, 2, 3
+SENSOR_CALIBRATIONS = {
+    0: {'min': .860, 'max': .483},
+    1: {'min': .860, 'max': .483},
+    2: {'min': .860, 'max': .483},
+    3: {'min': .860, 'max': .483},
+}
+
 """
-Read value of analog soil moisture sensor (up to 4) and continuously output reading.
-
-Sensor: Capacitive soil moisture sensor v1.2
-ADC: PCF8591 4 Channel 8 bit Analog to Digital Converter
+Get readings of up to 4 Capacitive soil moisture sensors, temperature (TMP36) using 
+MCP3008 10bit Analog Digital Converter
 """
-
-# ADC
-PCF8591_ADDRESS = 0x48
-CONTROL_BYTE = 0x40
-CHANNELS = [0]  # up to four inputs for PCF8591 Analog to Digital Converter
-# Calibrated sensor values
-MIN_HUMIDITY_VALUE = 220  # Value of probe when exposed to air
-MAX_HUMIDITY_VALUE = 128  # Value of probe when exposed to water
-# IO expander
-PCF8574_address = 0x27  # I2C address of the PCF8574 chip.
-PCF8574A_address = 0x3F  # I2C address of the PCF8574A chip.
-
-
-def read_analog(address, channel, command):
-    """
-    Read analog signal as 8 bit integer
-    :param address:
-    :param channel: Int
-    :param command:
-    :return: 8 bit value of analog signal
-    """
-    value = bus.read_byte_data(address, command + channel)
-    return value
-
-
-def write_analog(address, command, value):
-    """
-    Write DAC value
-    :param address:
-    :param value: 8 bit integer
-    :param command:
-    :return:
-    """
-    bus.write_byte_data(address, command, value)
 
 
 def get_humidity_percentage(value, min_value=MIN_HUMIDITY_VALUE, max_value=MAX_HUMIDITY_VALUE):
@@ -61,61 +36,64 @@ def get_humidity_percentage(value, min_value=MIN_HUMIDITY_VALUE, max_value=MAX_H
         return round(humidity_percentage, 1)
 
 
-def initialize_pcf8574():
-    try:
-        pcf8574 = PCF8574_GPIO(PCF8574_address)
-        return pcf8574
-    except:
-        try:
-            pcf8574 = PCF8574_GPIO(PCF8574A_address)
-            return pcf8574
-        except:
-            print('I2C Address Error !')
-            return None
-
-
-def main(lcd_display=None):
+def get_temperature_c(voltage, round_digits=0):
     """
-    Continuously print sensor readings
+    TMP36
+    Temperature(Centigrade) = [(analog voltage in V) - .5] * 100
+    .03 V calibration at 22C
+    :param voltage:
+    :return: Degrees C +-2
+    """
+    celsius = (voltage - 0.5 - .03) * 100
+    if round_digits or round_digits == 0:
+        return round(celsius, round_digits)
+    else:
+        return celsius
+
+
+def get_temperature_f(voltage, round_digits=0):
+    """
+    TMP36
+    Temperature(Fahrenheit) = ([(analog voltage in V) - .5] * 100 * ( 9 / 5)) + 32
+    :param voltage:
+    :param round_digits:
     :return:
     """
+    celsius = get_temperature_c(voltage, round_digits=None)
+    fahrenheit = (celsius * (9 / 5)) + 32
+    if round_digits or round_digits == 0:
+        return round(fahrenheit, round_digits)
+    else:
+        return fahrenheit
+
+
+def main():
+    moisture_sensors = {channel: MCP3008(channel=channel) for channel in MOISTURE_SENSOR_CHANNELS}
+    temperature_sensor = MCP3008(channel=1)
+
     while True:
-        soil_readings = []
-        soil_readings_dict = {}
-        for channel in CHANNELS:
-            value = read_analog(PCF8591_ADDRESS, channel, CONTROL_BYTE)
+        state_dict = dict()
+        message = ""
+        for channel in moisture_sensors:
+            value = moisture_sensors[channel].value
             soil_moisture = get_humidity_percentage(value)
-            soil_readings.append({'soil_moisture': soil_moisture,
-                                  'channel': channel})
-            soil_readings_dict[channel] = soil_moisture
+            state_dict['moisture_{}'.format(channel)] = {
+                'voltage': moisture_sensors[channel].voltage,
+                'value': value,
+                'soil_moisture': soil_moisture
+            }
+            message += "Plant {}: {}% ".format(channel, soil_moisture)
 
-        # write the DAC value to light led
-        write_analog(PCF8591_ADDRESS,
-                     CONTROL_BYTE,
-                     int(soil_readings[0]['soil_moisture'] * 2.55))
-
-        output_message = "Soil Moisture levels: "
-        output_message += ', '.join(["Plant {} - {}%".format(x['channel'], x['soil_moisture'])
-                                     for x in soil_readings])
-        print(output_message)
-        # construct lcd message
-        if lcd_display:
-            lcd_message = ' '.join(["{} {}%".format(x['channel'], x['soil_moisture']) for x in soil_readings])
-            lcd_message += '        \nDendi Inc.'
-            lcd_display.setCursor(0, 0)
-            lcd_display.message(lcd_message)
-        time.sleep(.2)
+        temperature_voltage = temperature_sensor.voltage
+        temperature = get_temperature_f(temperature_voltage)
+        state_dict['temperature'] = {
+            'voltage': temperature_voltage,
+            'fahrenheit': temperature,
+        }
+        temperature_message = "Temperature: {}F ".format(int(temperature))
+        print(temperature_message + message)
+        time.sleep(.5)
 
 
 if __name__ == '__main__':
-    print("Program is starting...")
-    bus = smbus.SMBus(1)
-
-    pcf8574 = initialize_pcf8574()
-    pcf8574.output(3, 1)  # turn on LCD back light
-    lcd = Adafruit_CharLCD(pin_rs=0, pin_e=2, pins_db=[4, 5, 6, 7], GPIO=pcf8574)
-    lcd.begin(16, 2)  # Set lcd column, rows
-    try:
-        main(lcd_display=lcd)
-    except KeyboardInterrupt:
-        bus.close()
+    main()
