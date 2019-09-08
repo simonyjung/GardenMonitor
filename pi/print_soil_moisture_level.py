@@ -12,11 +12,11 @@ MAX_HUMIDITY_VALUE = .483
 MOISTURE_SENSOR_CHANNELS = [0]  # 0, 1, 2, 3
 SENSOR_CALIBRATIONS = {
     0: {'min': .860, 'max': .483},
-    1: {'min': .860, 'max': .483},
+    1: {'min': .9648, 'max': .555},
     2: {'min': .860, 'max': .483},
     3: {'min': .860, 'max': .483},
 }
-TEMPERATURE_SENSOR_CHANNEL = 4  # 4
+TEMPERATURE_SENSOR_CHANNEL = 6  # 6
 
 """
 Get readings of up to 4 Capacitive soil moisture sensors, temperature (TMP36) using 
@@ -50,8 +50,10 @@ def get_temperature_c(voltage, round_digits=0):
     :return: Degrees C +-2
     """
     celsius = (voltage - 0.5) * 100
-    if round_digits or round_digits == 0:
+    if round_digits:
         return round(celsius, round_digits)
+    elif round_digits == 0:
+        return int(celsius)
     else:
         return celsius
 
@@ -66,8 +68,10 @@ def get_temperature_f(voltage, round_digits=0):
     """
     celsius = get_temperature_c(voltage, round_digits=None)
     fahrenheit = (celsius * (9 / 5)) + 32
-    if round_digits or round_digits == 0:
+    if round_digits:
         return round(fahrenheit, round_digits)
+    elif round_digits == 0:
+        return int(fahrenheit)
     else:
         return fahrenheit
 
@@ -75,7 +79,6 @@ def get_temperature_f(voltage, round_digits=0):
 def main():
     moisture_sensors = {channel: MCP3008(channel=channel) for channel in MOISTURE_SENSOR_CHANNELS}
     temperature_sensor = MCP3008(channel=TEMPERATURE_SENSOR_CHANNEL)
-    temperature_sensor_1 = MCP3008(channel=5)
 
     i2c = busio.I2C(board.SCL, board.SDA)
     sensor = adafruit_sht31d.SHT31D(i2c)
@@ -91,24 +94,26 @@ def main():
                 'value': value,
                 'soil_moisture': soil_moisture
             }
-            message += "Plant {}: {}% ".format(channel, soil_moisture)
+            message += "| Plant {}: {}% ".format(channel, soil_moisture)
 
         temperature_voltage = temperature_sensor.voltage
-        temperature = get_temperature_f(temperature_voltage)
-        temperature_voltage_1 = temperature_sensor_1.voltage
-        temperature_1 = get_temperature_f(temperature_voltage_1)
+        temperature = get_temperature_f(temperature_voltage, round_digits=1)
         state_dict['temperature'] = {
             'voltage': temperature_voltage,
             'fahrenheit': temperature,
         }
-        temperature_message = "Temperature: {}F ".format(temperature)
-        #d_humidity, d_temperature = Adafruit_DHT.read_retry(11, 4)
-        #dht_message = "DHT T: {}, H: {} ".format(d_temperature, d_humidity)
+        temperature_message = "| TMP36 Temperature: {}F ".format(temperature)
 
-        print('Humidity: {0}%'.format(sensor.relative_humidity))
-        print('Temperature: {0}F'.format((sensor.temperature * (9 / 5)) + 32))
+        SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
+        SHT31D_relative_humidity = int(sensor.relative_humidity)
+        SHT_message = '| SHT31D Temperature: {}F Humidity: {}% '.format(SHT31D_temp,
+                                                                        SHT31D_relative_humidity)
 
-        print(temperature_message + message)
+
+        predicted_actual_temp = round(temperature - ((SHT31D_temp - temperature) * .75), 1)
+        predicted_temp_message = "| Ambient Tempt: {} F ".format(predicted_actual_temp)
+
+        print(temperature_message + SHT_message + predicted_temp_message + message)
         time.sleep(.5)
 
 
