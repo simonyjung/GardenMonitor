@@ -4,6 +4,7 @@ import time
 import busio
 import adafruit_sht31d
 
+from phue import Bridge
 from gpiozero import MCP3008, RGBLED
 
 # Base Calibration
@@ -17,6 +18,11 @@ SENSOR_CALIBRATIONS = {
     3: {'min': .860, 'max': .483},
 }
 TEMPERATURE_SENSOR_CHANNEL = 6  # 6
+
+# Philips hue
+BRIDGE_IP = '192.168.2.43'
+# 1, 2 Bedroom standing, 3 Study, 4 bedroom lamp
+LIGHTS = [4, ]
 
 """
 Get readings of up to 4 Capacitive soil moisture sensors, temperature (TMP36) using 
@@ -41,12 +47,12 @@ def get_humidity_percentage(value, min_value=MIN_HUMIDITY_VALUE, max_value=MAX_H
         return round(humidity_percentage, 1)
 
 
-def get_temperature_c(voltage, round_digits=0):
+def get_temperature_c(voltage, round_digits=0 or None):
     """
     TMP36
     Temperature(Centigrade) = [(analog voltage in V) - .5] * 100
-    -.02 V calibration at 22C
     :param voltage:
+    :param round_digits:
     :return: Degrees C +-2
     """
     celsius = (voltage - 0.5) * 100
@@ -58,7 +64,7 @@ def get_temperature_c(voltage, round_digits=0):
         return celsius
 
 
-def get_temperature_f(voltage, round_digits=0):
+def get_temperature_f(voltage, round_digits=0 or None):
     """
     TMP36
     Temperature(Fahrenheit) = ([(analog voltage in V) - .5] * 100 * ( 9 / 5)) + 32
@@ -77,11 +83,19 @@ def get_temperature_f(voltage, round_digits=0):
 
 
 def main():
+    # Soil moisture sensors
     moisture_sensors = {channel: MCP3008(channel=channel) for channel in MOISTURE_SENSOR_CHANNELS}
+    # TMP36 Temperature Sensor
     temperature_sensor = MCP3008(channel=TEMPERATURE_SENSOR_CHANNEL)
 
+    # SHT31D Temperature and Humidity sensor
     i2c = busio.I2C(board.SCL, board.SDA)
     sensor = adafruit_sht31d.SHT31D(i2c)
+
+    # Hue
+    bridge = Bridge(BRIDGE_IP)
+    bridge.connect()
+    lights = bridge.get_light_objects('id')
 
     while True:
         state_dict = dict()
@@ -108,12 +122,7 @@ def main():
         SHT31D_relative_humidity = int(sensor.relative_humidity)
         SHT_message = '| SHT31D Temperature: {}F Humidity: {}% '.format(SHT31D_temp,
                                                                         SHT31D_relative_humidity)
-
-
-        predicted_actual_temp = round(temperature - ((SHT31D_temp - temperature) * .75), 1)
-        predicted_temp_message = "| Ambient Tempt: {} F ".format(predicted_actual_temp)
-
-        print(temperature_message + SHT_message + predicted_temp_message + message)
+        print(temperature_message + SHT_message + message)
         time.sleep(.5)
 
 
