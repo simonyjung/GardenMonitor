@@ -116,12 +116,12 @@ def main():
             'fahrenheit': temperature,
         }
         temperature_message = "| TMP36 Temperature: {}F {}Fc".format(temperature,
-                                                                     temperature - 2.5)
+                                                                     round(temperature - 2.5, 1))
 
         SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
         SHT31D_relative_humidity = int(sensor.relative_humidity)
         SHT_message = '| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(SHT31D_temp,
-                                                                              SHT31D_temp - 7.9,
+                                                                              round(SHT31D_temp - 7.9, 1),
                                                                             SHT31D_relative_humidity)
         print(temperature_message + SHT_message + message)
         time.sleep(.5)
