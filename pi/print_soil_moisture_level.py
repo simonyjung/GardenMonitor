@@ -1,6 +1,5 @@
 import board
 import time
-#import Adafruit_DHT
 import busio
 import adafruit_sht31d
 
@@ -116,12 +115,14 @@ def main():
             'voltage': temperature_voltage,
             'fahrenheit': temperature,
         }
-        temperature_message = "| TMP36 Temperature: {}F ".format(temperature)
+        temperature_message = "| TMP36 Temperature: {}F {}Fc".format(temperature,
+                                                                     temperature - 2.5)
 
         SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
         SHT31D_relative_humidity = int(sensor.relative_humidity)
-        SHT_message = '| SHT31D Temperature: {}F Humidity: {}% '.format(SHT31D_temp,
-                                                                        SHT31D_relative_humidity)
+        SHT_message = '| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(SHT31D_temp,
+                                                                              SHT31D_temp - 7.9,
+                                                                            SHT31D_relative_humidity)
         print(temperature_message + SHT_message + message)
         time.sleep(.5)
 
