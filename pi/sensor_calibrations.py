@@ -18,7 +18,7 @@ indoor_calibrations = {
 outdoor_calibrations = {
     "SHT31D": {
       "temperature": -12,
-      "humidity": 0,
+      "humidity": 19,
     },
     "TMP36": {
       "temperature": -5.5
