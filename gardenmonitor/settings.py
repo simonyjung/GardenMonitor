@@ -44,6 +44,7 @@ ALLOWED_HOSTS = ['localhost', 'simon-garden.herokuapp.com']
 
 INSTALLED_APPS = [
     'plants',
+    'environment',
     'whitenoise',
     'django.contrib.admin',
     'django.contrib.auth',
