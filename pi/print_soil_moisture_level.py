@@ -17,6 +17,9 @@ SENSOR_CALIBRATIONS = {
     3: {'min': .860, 'max': .483},
 }
 TEMPERATURE_SENSOR_CHANNEL = 6  # 6
+SHT31D_TEMPERATURE_CALIBRATION = -7.9  # Indoor: -7.9F, Outdoors in container:
+SHT31D_HUMIDITY_CALIBRATION = None
+TMP36_TEMPERATURE_CALIBRATION = -2.5  # Indoor: -2.5F, Outdoor in container
 
 # Philips hue
 BRIDGE_IP = '192.168.2.43'
@@ -115,14 +118,17 @@ def main():
             'voltage': temperature_voltage,
             'fahrenheit': temperature,
         }
-        temperature_message = "| TMP36 Temperature: {}F {}Fc".format(temperature,
-                                                                     round(temperature - 2.5, 1))
+        temperature_message = "| TMP36 Temperature: {}F {}Fc".format(
+            temperature,
+            round(temperature + TMP36_TEMPERATURE_CALIBRATION, 1)
+        )
 
         SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
         SHT31D_relative_humidity = int(sensor.relative_humidity)
-        SHT_message = '| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(SHT31D_temp,
-                                                                              round(SHT31D_temp - 7.9, 1),
-                                                                            SHT31D_relative_humidity)
+        SHT_message = '| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(
+            SHT31D_temp,
+            round(SHT31D_temp + SHT31D_TEMPERATURE_CALIBRATION, 1),
+            SHT31D_relative_humidity)
         print(temperature_message + SHT_message + message)
         time.sleep(.5)
 

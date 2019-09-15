@@ -17,6 +17,10 @@ SENSOR_CALIBRATIONS = {
     3: {'min': .860, 'max': .483},
 }
 TEMPERATURE_SENSOR_CHANNEL = 6  # 6
+SHT31D_TEMPERATURE_CALIBRATION = -7.9  # Indoor: -7.9F, Outdoors in container:
+SHT31D_HUMIDITY_CALIBRATION = None
+TMP36_TEMPERATURE_CALIBRATION = -2.5  # Indoor: -2.5F, Outdoor in container
+
 
 # Philips hue
 BRIDGE_IP = '192.168.2.43'
@@ -28,8 +32,6 @@ DRY_THRESHOLD = 10
 Get readings of up to 4 Capacitive soil moisture sensors, 
 temperature and humidity (SHT31D)
 redundant temperature (TMP36)
-
-If moisture level for a plant drops below 10%, flash lights 
 """
 
 
