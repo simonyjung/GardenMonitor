@@ -38,24 +38,6 @@ def get_temperature_c(voltage, round_digits=0 or None):
         return celsius
 
 
-def get_temperature_f(voltage, round_digits=0 or None):
-    """
-    TMP36
-    Temperature(Fahrenheit) = ([(analog voltage in V) - .5] * 100 * ( 9 / 5)) + 32
-    :param voltage:
-    :param round_digits:
-    :return:
-    """
-    celsius = get_temperature_c(voltage, round_digits=None)
-    fahrenheit = (celsius * (9 / 5)) + 32
-    if round_digits:
-        return round(fahrenheit, round_digits)
-    elif round_digits == 0:
-        return int(fahrenheit)
-    else:
-        return fahrenheit
-
-
 def main():
     # SHT31D Temperature and Humidity sensor
     i2c = busio.I2C(board.SCL, board.SDA)
@@ -77,7 +59,8 @@ def main():
     tmp36_temperature_f = round((tmp36_temperature_c * (9 / 5)) + 32, 1)
     tmp36_temperature_f_adj = round(tmp36_temperature_f + calibrations['TMP36']['temperature'], 1)
 
-    print('logging {}F, {}H '.format(sht31d_temperature_f_adj, sht31d_humidity_adj))
+    # Save Measurements
+    print('logging {}F, {}% Humidity '.format(sht31d_temperature_f_adj, sht31d_humidity_adj))
     environment_models.AirMeasurement.objects.create(
         sht31d_temperature_c=sht31d_temperature_c,
         sht31d_temperature_f=sht31d_temperature_f,
