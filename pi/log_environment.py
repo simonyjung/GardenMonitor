@@ -18,6 +18,10 @@ TEMPERATURE_SENSOR_CHANNEL = 6
 
 """
 Log environment values
+
+Run every 5 minutes using cron
+
+*/5 * * * * cd /home/pi/Code/GardenMonitor && /home/pi/.virtualenvs/GardenMonitor/bin/python -m pi.log_environment
 """
 
 
