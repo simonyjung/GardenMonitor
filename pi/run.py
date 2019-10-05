@@ -28,6 +28,7 @@ BRIDGE_IP = '192.168.2.43'
 LIGHTS = [4, ]
 
 DRY_THRESHOLD = 10
+
 """
 Get readings of up to 4 Capacitive soil moisture sensors, 
 temperature and humidity (SHT31D)

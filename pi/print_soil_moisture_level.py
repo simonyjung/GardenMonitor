@@ -11,7 +11,7 @@ from pi.sensor_calibrations import indoor_calibrations as calibrations
 # Base Calibration
 MIN_HUMIDITY_VALUE = .860
 MAX_HUMIDITY_VALUE = .483
-MOISTURE_SENSOR_CHANNELS = [0]  # 0, 1, 2, 3
+MOISTURE_SENSOR_CHANNELS = [0, 1]  # 0, 1, 2, 3
 SENSOR_CALIBRATIONS = {
     0: {'min': .860, 'max': .483},
     1: {'min': .9648, 'max': .555},
@@ -23,7 +23,10 @@ TEMPERATURE_SENSOR_CHANNEL = 6  # 6
 # Philips hue
 BRIDGE_IP = '192.168.2.43'
 # 1, 2 Bedroom standing, 3 Study, 4 bedroom lamp
-LIGHTS = [4, ]
+LIGHTS = {1: 6,
+          0: 5}
+
+DRY_CUTOFF = 25
 
 """
 Get readings of up to 4 Capacitive soil moisture sensors, temperature (TMP36) using 
@@ -110,6 +113,21 @@ def main():
                 'soil_moisture': soil_moisture
             }
             message += "| Plant {}: {}% ".format(channel, soil_moisture)
+
+            # Blue is hue 45808 sat 254
+            # normal hue 8402 sat 140
+            if lights[LIGHTS[channel]].on:
+                if soil_moisture < DRY_CUTOFF:
+                    print("dry soil detected, turning light blue")
+                    lights[LIGHTS[channel]].hue = 45808
+                    lights[LIGHTS[channel]].saturation = 254
+                elif lights[LIGHTS[channel]].hue == 45808:
+                    print("Wet soil but light blue, turning back to normal")
+                    lights[LIGHTS[channel]].hue = 8402
+                    lights[LIGHTS[channel]].saturation = 140
+                else:
+                    pass
+            # print("Sensor {}: {}".format(channel, value))
 
         temperature_voltage = temperature_sensor.voltage
         temperature = get_temperature_f(temperature_voltage, round_digits=1)
