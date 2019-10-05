@@ -6,7 +6,7 @@ import adafruit_sht31d
 from phue import Bridge
 from gpiozero import MCP3008, RGBLED
 
-from sensor_calibrations import outdoor_calibrations as calibrations
+from pi.sensor_calibrations import indoor_calibrations as calibrations
 
 # Base Calibration
 MIN_HUMIDITY_VALUE = .860
