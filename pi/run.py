@@ -113,7 +113,7 @@ def main():
             SHT31D_temp,
             round(SHT31D_temp + calibrations['SHT31D']['temperature'], 1),
             SHT31D_relative_humidity)
-        print(temperature_message + SHT_message + message)
+        print(SHT_message + message)
         time.sleep(.5)
 
 
