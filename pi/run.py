@@ -7,7 +7,7 @@ from phue import Bridge
 from gpiozero import MCP3008, RGBLED
 
 from pi.sensor_calibrations import indoor_calibrations as calibrations
-from pi.functions import get_humidity_percentage, get_temperature_f
+from pi.functions import get_humidity_percentage
 
 
 # Base Calibration
@@ -36,7 +36,7 @@ NORMAL_HUE = 8402
 NORMAL_SATURATION = 140
 
 """
-Get readings of up to 2 Capacitive soil moisture sensors, temperature (TMP36) using 
+Get readings of 2 Capacitive soil moisture sensors on kitchen counter
 MCP3008 10bit Analog Digital Converter
 
 Turn Hue lights above plant blue if soil moisture is below DRY_CUTOFF
@@ -46,8 +46,6 @@ Turn Hue lights above plant blue if soil moisture is below DRY_CUTOFF
 def main():
     # Soil moisture sensors
     moisture_sensors = {channel: MCP3008(channel=channel) for channel in MOISTURE_SENSOR_CHANNELS}
-    # TMP36 Temperature Sensor
-    temperature_sensor = MCP3008(channel=TEMPERATURE_SENSOR_CHANNEL)
 
     # SHT31D Temperature and Humidity sensor
     i2c = busio.I2C(board.SCL, board.SDA)
@@ -111,26 +109,13 @@ def main():
                     pass
             # print("Sensor {}: {}".format(channel, value))
 
-        # TMP36 reading
-        temperature_voltage = temperature_sensor.voltage
-        temperature = get_temperature_f(temperature_voltage, round_digits=1)
-        state_dict['temperature'] = {
-            'voltage': temperature_voltage,
-            'fahrenheit': temperature,
-        }
-        temperature_message = "| TMP36 Temperature: {}F {}Fc".format(
-            temperature,
-            round(temperature + calibrations['TMP36']['temperature'], 1)
-        )
-
         # SHT31D reading
         SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
         SHT31D_relative_humidity = int(sensor.relative_humidity)
-        SHT_message = '|| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(
-            SHT31D_temp,
+        SHT_message = '|| SHT31D Temperature: {} F Humidity: {}% '.format(
             round(SHT31D_temp + calibrations['SHT31D']['temperature'], 1),
-            SHT31D_relative_humidity)
-        print(SHT_message + message)
+            round(SHT31D_relative_humidity + calibrations['SHT31D']['humidity'], 1))
+        print(SHT_message + message + '||')
         time.sleep(1)
 
 
