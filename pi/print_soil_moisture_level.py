@@ -129,6 +129,7 @@ def main():
                     pass
             # print("Sensor {}: {}".format(channel, value))
 
+        # TMP36 reading
         temperature_voltage = temperature_sensor.voltage
         temperature = get_temperature_f(temperature_voltage, round_digits=1)
         state_dict['temperature'] = {
@@ -140,6 +141,7 @@ def main():
             round(temperature + calibrations['TMP36']['temperature'], 1)
         )
 
+        # SHT31D reading
         SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
         SHT31D_relative_humidity = int(sensor.relative_humidity)
         SHT_message = '| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(
