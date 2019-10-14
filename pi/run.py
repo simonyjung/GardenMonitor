@@ -69,7 +69,24 @@ def main():
                 'value': value,
                 'soil_moisture': soil_moisture
             }
-            message += "| Plant {}: {}% ".format(channel, soil_moisture)
+
+            # record light status
+            state_dict['light_{}'.format(channel)] = {
+                'on': lights[LIGHTS[channel]].on,
+                'hue': lights[LIGHTS[channel]].hue,
+                'saturation': lights[LIGHTS[channel]].saturation,
+                'brightness': lights[LIGHTS[channel]].brightness,
+            }
+
+            message += "|| Plant {}: {}%, Light {}: On: {} - {} H, {} S, {} B ".format(
+                channel,
+                soil_moisture,
+                channel,
+                state_dict['light_{}'.format(channel)]['on'],
+                state_dict['light_{}'.format(channel)]['hue'],
+                state_dict['light_{}'.format(channel)]['saturation'],
+                state_dict['light_{}'.format(channel)]['brightness'],
+            )
 
             # Blue is hue 45808 sat 254
             # normal hue 8402 sat 140
@@ -109,12 +126,12 @@ def main():
         # SHT31D reading
         SHT31D_temp = round((sensor.temperature * (9 / 5)) + 32, 1)
         SHT31D_relative_humidity = int(sensor.relative_humidity)
-        SHT_message = '| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(
+        SHT_message = '|| SHT31D Temperature: {}F {} Fc Humidity: {}% '.format(
             SHT31D_temp,
             round(SHT31D_temp + calibrations['SHT31D']['temperature'], 1),
             SHT31D_relative_humidity)
         print(SHT_message + message)
-        time.sleep(.5)
+        time.sleep(1)
 
 
 if __name__ == '__main__':

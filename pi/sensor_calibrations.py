@@ -1,7 +1,7 @@
 indoor_calibrations = {
     "SHT31D": {
-      "temperature": -7.9,
-      "humidity": 0,
+      "temperature": -12.9,
+      "humidity": 13,
     },
     "TMP36": {
       "temperature": -2.5
